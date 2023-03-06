@@ -1,0 +1,24 @@
+name: ci
+
+on: ['push', 'pull_request']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Check pyproject.toml
+        run: poetry check
+        working-directory: ./requirements
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master

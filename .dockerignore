@@ -1,0 +1,12 @@
+# repo files
+.git/
+.github/
+bin/
+requirements/poetry.lock
+requirements/pyproject.toml
+.gitignore
+LICENSE
+README.md
+
+# other files
+.DS_Store

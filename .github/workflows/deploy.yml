@@ -1,0 +1,53 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - "0.19"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        dbt-adapter: ['bigquery', 'postgres', 'redshift', 'snowflake']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/popsql/dbt-${{ matrix.dbt-adapter }}
+          tags: type=ref,event=branch
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          # snowflake-connector-python does not have wheel for arm64, and
+          # building its dependencies (especially pyarrow) is a pain, so
+          # the platform is disabled for now.
+          platforms: linux/amd64 # ,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            DBT_ADAPTER=${{ matrix.dbt-adapter }}
