@@ -1,19 +1,19 @@
 [tool.poetry]
-name = "dbt-1-1"
+name = "dbt-1-2"
 version = "0.0.0"
-description = "dbt 1.1 setup"
+description = "dbt 1.2 setup"
 authors = []
 readme = "README.md"
 packages = []
 
 [tool.poetry.dependencies]
 python = "~3.8"
-dbt-core = "~1.1.4"
+dbt-core = "~1.2.5"
 dbt-rpc = "~0.1.2"
-dbt-bigquery = "~1.1.1"
-dbt-postgres = "~1.1.4"
-dbt-redshift = "~1.1.0"
-dbt-snowflake = "~1.1.0"
+dbt-bigquery = "~1.2.0"
+dbt-postgres = "~1.2.5"
+dbt-redshift = "~1.2.1"
+dbt-snowflake = "~1.2.0"
 # dbt-rpc specifies ">=1.12,<2", but there's a breaking change in 1.14 with how
 # dbt uses the library.
 json-rpc = "1.13.0"
