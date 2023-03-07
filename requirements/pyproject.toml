@@ -1,22 +1,20 @@
 [tool.poetry]
-name = "dbt-0-21"
+name = "dbt-1-0"
 version = "0.0.0"
-description = "dbt 0.21 setup"
+description = "dbt 1.0 setup"
 authors = []
 readme = "README.md"
 packages = []
 
 [tool.poetry.dependencies]
 python = "~3.8"
-dbt-core = "^0.21.1"
-dbt-postgres = "^0.21.1"
-dbt-bigquery = "^0.21.1"
-dbt-redshift = "^0.21.1"
-dbt-snowflake = "^0.21.1"
-# a transitive dependency (jinja2) relies on this without a proper constraint,
-# and the 2.x line is incompatible with jinja2 2.x that gets pulled in by dbt
-MarkupSafe = "^1.1.1"
-# dbt specifies ">=1.12,<2", but there's a breaking change in 1.14 with how
+dbt-core = "~1.0.9"
+dbt-rpc = "~0.1.2"
+dbt-bigquery = "~1.0.0"
+dbt-postgres = "~1.0.9"
+dbt-redshift = "~1.0.1"
+dbt-snowflake = "~1.0.1"
+# dbt-rpc specifies ">=1.12,<2", but there's a breaking change in 1.14 with how
 # dbt uses the library.
 json-rpc = "1.13.0"
 

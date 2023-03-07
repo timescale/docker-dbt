@@ -3,7 +3,7 @@ name: deploy
 on:
   push:
     branches:
-      - "0.21"
+      - "1.0"
 
 jobs:
   docker:
@@ -42,10 +42,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          # snowflake-connector-python does not have wheel for arm64, and
-          # building its dependencies (especially pyarrow) is a pain, so
-          # the platform is disabled for now.
-          platforms: linux/amd64 # ,linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
