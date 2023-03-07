@@ -3,7 +3,7 @@ name: deploy
 on:
   push:
     branches:
-      - "1.0"
+      - "0.20"
 
 jobs:
   docker:
