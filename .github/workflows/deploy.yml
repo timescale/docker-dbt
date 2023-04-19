@@ -73,7 +73,7 @@ jobs:
           context: .
           platforms: ${{ steps.platforms.outputs.platforms }}
           push: true
-          tags: ghcr.io/popsql/dbt-${{ matrix.adapter }}-${{ matrix.version }}
+          tags: ghcr.io/popsql/dbt-${{ matrix.adapter }}:${{ matrix.version }}
           build-args: |
             DBT_ADAPTER=${{ matrix.adapter }}
             DBT_VERSION=${{ matrix.version }}
