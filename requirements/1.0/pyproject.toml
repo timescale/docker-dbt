@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "dbt-1-0"
+version = "0.0.0"
+description = "dbt 1.0 setup"
+authors = []
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "~3.8"
+dbt-core = "~1.0.9"
+dbt-rpc = "~0.1.2"
+dbt-bigquery = "~1.0.0"
+dbt-postgres = "~1.0.9"
+dbt-redshift = "~1.0.1"
+dbt-snowflake = "~1.0.1"
+# dbt-rpc specifies ">=1.12,<2", but there's a breaking change in 1.14 with how
+# dbt uses the library.
+json-rpc = "1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

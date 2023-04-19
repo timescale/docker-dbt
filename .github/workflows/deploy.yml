@@ -3,27 +3,56 @@ name: deploy
 on:
   push:
     branches:
-      - "1.*"
+      - "main"
 
 jobs:
-  docker:
+  generate-matrix:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
-      matrix:
-        dbt-adapter: ['bigquery', 'postgres', 'redshift', 'snowflake']
-
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
+      - name: Set matrix
+        id: set-matrix
+        run: echo "matrix=$(bash ./bin/generate_matrix.sh)" >> $GITHUB_OUTPUT
+
+  docker:
+    needs:
+      - generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
         with:
-          images: ghcr.io/popsql/dbt-${{ matrix.dbt-adapter }}
-          tags: type=ref,event=branch
+          python-version: '3.8'
+
+      - name: Install poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Generate requirements file
+        run: bash ./bin/generate_requirements.sh ${{ matrix.version }} ${{ matrix.adapter }}
+
+      # snowflake adapter for dbt < 1.1 does not have prebuilt arm64 wheels, and building it
+      # from source is very ardious and time consuming (due to pyarrow), so only build for
+      # amd64 for those versions
+      - name: Set platforms
+        id: platforms
+        run: |
+          version=${{ matrix.version }}
+          if [ "${{ matrix.adapter }}" = "snowflake" ] && ([ "${version:0:1}" = "0" ] || [ "${version}" = "1.0" ]); then
+            platform="linux/amd64"
+          else
+            platform="linux/amd64,linux/arm64"
+          fi
+          echo "platforms=${platform}"
+          echo "platforms=${platform}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -42,9 +71,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ steps.platforms.outputs.platforms }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/popsql/dbt-${{ matrix.adapter }}-${{ matrix.version }}
           build-args: |
-            DBT_ADAPTER=${{ matrix.dbt-adapter }}
+            DBT_ADAPTER=${{ matrix.adapter }}
+            DBT_VERSION=${{ matrix.version }}

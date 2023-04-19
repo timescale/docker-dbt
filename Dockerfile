@@ -1,5 +1,6 @@
 FROM python:3.8-slim-bullseye
 
+ARG DBT_VERSION
 ARG DBT_ADAPTER
 ARG UID=1000
 ARG GID=1000
@@ -14,7 +15,7 @@ RUN apt-get update \
   && groupadd -f -g ${GID} -r dbt && useradd -g dbt -l -m -r -u ${UID} dbt \
   && python3 -m pip install -U wheel
 
-COPY requirements/requirements-${DBT_ADAPTER}.txt /tmp/requirements.txt
+COPY requirements/${DBT_VERSION}/requirements-${DBT_ADAPTER}.txt /tmp/requirements.txt
 
 RUN  python3 -m pip install -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
 

@@ -1,6 +1,7 @@
 # `popsql/dbt` docker images
 
-This repo contains the Docker images we use for dbt.
+This repo contains the code for generating our dbt Docker images, which are located on
+the GitHub container registry.
 
 Based off of the official python image, we then add:
 
@@ -20,25 +21,27 @@ docker pull ghcr.io/popsql/dbt-${ADAPTER}:${VERSION}
 
 ## Development
 
-The repo is structured such that we have a branch per supported dbt version. The branch names are
-named as `${major}.${minor}` of a given dbt version. Any push to these branches will produce images
-in the container registry for that version, with one image per supported adapter.
+The repo is structured such that under the `./requirements` folder, there is a folder
+that contains each version of dbt we support. Within each folder, there is then
+`pyproject.toml` and `poetry.lock` files. Within each `pyproject.toml`, there is then
+the list of adapters we support for that given version, along with the shared
+dependencies (e.g. `dbt-core` and `dbt-rpc`). After changing something within the
+`pyproject.toml` file, you will need to run `poetry lock` to update the `poetry.lock`
+file.
 
-Within each branch, the file structure is that we have one Dockerfile that used by all adapters,
-which dynamically then uses one of the `requirements.txt` files based on the passed in
-`DBT_ADAPTER` build argument. These requirements files are generated via the
-[poetry](https://python-poetry.org/) tool. The expected workflow is that you will edit the
-`pyproject.toml` file, and then from within the `requirements` directory run:
+As part of our CD process, we then handle generating a per adapter requirements file
+from these two files.
 
-```bash
-poetry lock
-../bin/generate_requirements.sh
-```
+## Docker Platforms
 
-This will generate a `requirements.txt` file per adapter, leaving off the dependencies for other
-adapters.
-
-## Targets
+Most of the produced images should support the following platforms:
 
 - linux/amd64
 - linux/arm64
+
+Some images may not have a `linux/arm64` target if building for it is not possible, or very ardous.
+For example, `dbt-snowflake <= 1.1` requires building pyarrow from source which requires a bunch of
+additional packages and time, so we only have `linux/amd64` platforms available there.
+
+The information on which platforms to build for a given image is captured within our `deploy.yml`
+CD script.
