@@ -27,10 +27,25 @@ that contains each version of dbt we support. Within each folder, there is then
 the list of adapters we support for that given version, along with the shared
 dependencies (e.g. `dbt-core` and `dbt-rpc`). After changing something within the
 `pyproject.toml` file, you will need to run `poetry lock` to update the `poetry.lock`
-file.
+file (use `poetry lock --no-update` to avoid unnecessarily updating all dependencies
+in the lock file).
 
 As part of our CD process, we then handle generating a per adapter requirements file
 from these two files.
+
+### Building Images Locally
+
+Docker images can be built locally via the `./bin/build.sh` script, which takes two
+arguments: a version and an adapter. For example, the following command builds an
+image for the Athena adapter for dbt version 1.4:
+
+```bash
+./bin/build.sh 1.4 athena
+```
+
+The image is named and tagged in the same fashion as when it's built by the deploy
+pipeline, meaning that it can be used locally in place of such an image until it's
+pulled down from ghcr again.
 
 ## Docker Platforms
 
