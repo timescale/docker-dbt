@@ -10,6 +10,7 @@ packages = []
 python = "~3.8"
 dbt-core = "~1.1.4"
 dbt-rpc = "~0.1.2"
+dbt-athena-community = "~1.0.4"
 dbt-bigquery = "~1.1.1"
 dbt-postgres = "~1.1.4"
 dbt-redshift = "~1.1.0"
