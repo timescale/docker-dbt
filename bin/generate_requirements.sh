@@ -26,7 +26,7 @@ if [ ! -d "${requirements_dir}" ]; then
   exit 1
 fi
 
-if grep -Fxq "$adapter" "${requirements_dir}/${version}/pyproject.toml"; then
+if grep -Fxq "$adapter" "${requirements_dir}/pyproject.toml"; then
   echo "Adapter ${adapter} for ${version} not found"
   exit 1
 fi
