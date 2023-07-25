@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "dbt-1-5"
+version = "0.0.0"
+description = "dbt 1.5 setup"
+authors = []
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "~3.8"
+dbt-core = "~1.5.3"
+dbt-rpc = "~0.4.1"
+dbt-athena-community = "~1.5.1"
+dbt-bigquery = "~1.5.3"
+dbt-postgres = "~1.5.3"
+dbt-redshift = "~1.5.8"
+dbt-snowflake = "~1.5.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
