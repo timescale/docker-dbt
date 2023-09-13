@@ -7,15 +7,19 @@ Based off of the official python image, we then add:
 
 - `dbt-core`
 - `dbt-rpc`
-- one of the `dbt` adapters (e.g. `dbt-postgres`)
+- one or all of the `dbt` adapters (e.g. `dbt-postgres`)
 
 Where each image is available for dbt 0.19 onward.
 
 ## Use
 
-Images are published to the GitHub container registry.
+Images are published to the GitHub container registry, where we have one image that
+contains all the adapters, and then a container per adapter:
 
 ```bash
+# has all adapters
+docker pull ghcr.io/popsql/dbt-full:${VERSION}
+# individual adapters
 docker pull ghcr.io/popsql/dbt-${ADAPTER}:${VERSION}
 ```
 
@@ -36,8 +40,14 @@ from these two files.
 ### Building Images Locally
 
 Docker images can be built locally via the `./bin/build.sh` script, which takes two
-arguments: a version and an adapter. For example, the following command builds an
-image for the Athena adapter for dbt version 1.4:
+arguments: a version and optionally an adapter. For example, the following command
+builds the full image for dbt 1.4:
+
+```bash
+./bin/build.sh 1.4
+```
+
+and then to build the image for just Athena adapter for 1.4:
 
 ```bash
 ./bin/build.sh 1.4 athena
@@ -54,9 +64,10 @@ Most of the produced images should support the following platforms:
 - linux/amd64
 - linux/arm64
 
-Some images may not have a `linux/arm64` target if building for it is not possible, or very ardous.
-For example, `dbt-snowflake <= 1.1` requires building pyarrow from source which requires a bunch of
-additional packages and time, so we only have `linux/amd64` platforms available there.
+Some images may not have a `linux/arm64` target if building for it is not possible, or
+very ardous. For example, `dbt-snowflake <= 1.1` requires building pyarrow from source
+which requires a bunch of additional packages and time, so we only have `linux/amd64`
+platforms available there.
 
-The information on which platforms to build for a given image is captured within our `deploy.yml`
-CD script.
+The information on which platforms to build for a given image is captured within our
+`deploy.yml` CD script.

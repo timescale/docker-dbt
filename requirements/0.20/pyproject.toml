@@ -3,8 +3,6 @@ name = "dbt-0-20"
 version = "0.0.0"
 description = "dbt 0.20 setup"
 authors = []
-readme = "README.md"
-packages = []
 
 [tool.poetry.dependencies]
 python = "~3.8"
