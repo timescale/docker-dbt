@@ -13,10 +13,10 @@ RUN apt-get update \
   && groupadd -f -g ${GID} -r dbt && useradd -g dbt -l -m -r -u ${UID} dbt \
   && python3 -m pip install -U wheel
 
+ARG REQUIREMENTS_FILE
 ARG DBT_VERSION
-ARG DBT_ADAPTER
 
-COPY requirements/${DBT_VERSION}/requirements-${DBT_ADAPTER}.txt /tmp/requirements.txt
+COPY requirements/${DBT_VERSION}/${REQUIREMENTS_FILE} /tmp/requirements.txt
 
 RUN  python3 -m pip install -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
 

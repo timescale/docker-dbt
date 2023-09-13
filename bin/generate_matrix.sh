@@ -14,15 +14,14 @@ for i in "${!versions[@]}"; do
     echo -n ', '
   fi
 
+  echo -n "{\"version\": \"${version}\", \"adapter\": \"\"}"
+
   requirements_dir="${BASE_REQUIREMENTS_DIR}/${version}"
   # shellcheck disable=SC2207
   adapters=($(grep "^dbt-*" "${requirements_dir}"/pyproject.toml | grep -v "core" | grep -v "rpc" | perl -p -e 's/^dbt-([a-z0-9]*).*$/\1/'))
   for j in "${!adapters[@]}"; do
-    if [ "${j}" -gt 0 ]; then
-      echo -n ', '
-    fi
     adapter=${adapters[$j]}
-    echo -n "{\"version\": \"${version}\", \"adapter\": \"${adapter}\"}"
+    echo -n ",{\"version\": \"${version}\", \"adapter\": \"${adapter}\"}"
   done
 done
 

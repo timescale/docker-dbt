@@ -42,17 +42,30 @@ jobs:
       # snowflake adapter for dbt < 1.1 does not have prebuilt arm64 wheels, and building it
       # from source is very ardious and time consuming (due to pyarrow), so only build for
       # amd64 for those versions
-      - name: Set platforms
-        id: platforms
+      - name: Set build properties
+        id: properties
         run: |
           version=${{ matrix.version }}
-          if [ "${{ matrix.adapter }}" = "snowflake" ] && ([ "${version:0:1}" = "0" ] || [ "${version}" = "1.0" ]); then
+          adapter=${{ matrix.adapter }}
+          if ([ -z ${adapter} ] || [ "${adapter}" = "snowflake" ]) && ([ "${version:0:1}" = "0" ] || [ "${version}" = "1.0" ]); then
             platform="linux/amd64"
           else
             platform="linux/amd64,linux/arm64"
           fi
+          if [ -z ${adapter} ]; then
+            image_name="dbt-full"
+            requirements_file="requirements.txt"
+          else
+            image_name="dbt-${adapter}"
+            requirements_file="requirements-${adapter}.txt"
+          fi
+
           echo "platforms=${platform}"
+          echo "image_name=${image_name}"
+          echo "requirements_file=${requirements_file}"
           echo "platforms=${platform}" >> $GITHUB_OUTPUT
+          echo "image_name=${image_name}" >> $GITHUB_OUTPUT
+          echo "requirements_file=${requirements_file}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -71,9 +84,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: ${{ steps.platforms.outputs.platforms }}
+          platforms: ${{ steps.properties.outputs.platforms }}
           push: true
-          tags: ghcr.io/popsql/dbt-${{ matrix.adapter }}:${{ matrix.version }}
+          tags: ghcr.io/popsql/${{ steps.properties.outputs.image_name }}:${{ matrix.version }}
           build-args: |
-            DBT_ADAPTER=${{ matrix.adapter }}
+            REQUIREMENTS_FILE=${{ steps.properties.outputs.requirements_file }}
             DBT_VERSION=${{ matrix.version }}

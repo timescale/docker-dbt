@@ -15,8 +15,15 @@ adapter=$2
 
 "${SCRIPT_DIR}"/generate_requirements.sh "${version}" "${adapter}"
 
+if [ -z ${adapter} ]; then
+    requirements_file="requirements.txt"
+    image_name="dbt-full"
+else
+    requirements_file="requirements-${adapter}.txt"
+    image_name="dbt-${adapter}"
+fi
+
 docker build \
-    --build-arg DBT_VERSION="${version}" \
-    --build-arg DBT_ADAPTER="${adapter}" \
-    --tag "ghcr.io/popsql/dbt-${adapter}:${version}" \
+    --build-arg REQUIREMENTS_FILE="${requirements_file}" \
+    --tag "ghcr.io/popsql/${image_name}:${version}" \
     "${BASE_DIR}"
