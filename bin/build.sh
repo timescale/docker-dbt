@@ -15,7 +15,7 @@ adapter=$2
 
 "${SCRIPT_DIR}"/generate_requirements.sh "${version}" "${adapter}"
 
-if [ -z ${adapter} ]; then
+if [ -z "${adapter}" ]; then
     requirements_file="requirements.txt"
     image_name="dbt-full"
 else
