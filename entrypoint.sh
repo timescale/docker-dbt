@@ -14,8 +14,6 @@ fi
 
 if [ -n "${BQ_KEYFILE}" ]; then
   echo "${BQ_KEYFILE}" > /.dbt/bq_keyfile.json
-elif [ -f ~/.dbt/keyfile.json ]; then
-  cp ~/.dbt/bq_keyfile.json /.dbt/bq_keyfile.json
 fi
 
 exec "$@"
