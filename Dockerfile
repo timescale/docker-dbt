@@ -1,5 +1,8 @@
 FROM python:3.8-slim-bullseye
 
+ENV DBT_PROFILES_DIR=/.dbt
+ENV AWS_SHARED_CREDENTIALS_FILE=/.dbt/aws_credentials
+
 ARG UID=1000
 ARG GID=1000
 
@@ -10,8 +13,14 @@ RUN apt-get update \
     libpq-dev \
     git \
   && rm -rf /var/lib/apt/lists/ \
-  && groupadd -f -g ${GID} -r dbt && useradd -g dbt -l -m -r -u ${UID} dbt \
   && python3 -m pip install -U wheel
+
+ADD entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh \
+  && groupadd -f -g ${GID} -r dbt && useradd -g dbt -l -m -r -u ${UID} dbt \
+  && mkdir /.dbt \
+  && chown dbt:dbt /.dbt
 
 ARG REQUIREMENTS_FILE
 ARG DBT_VERSION
@@ -23,4 +32,5 @@ RUN  python3 -m pip install -r /tmp/requirements.txt && rm -f /tmp/requirements.
 USER dbt
 WORKDIR /dbt
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["dbt", "debug"]

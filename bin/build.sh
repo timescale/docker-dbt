@@ -23,7 +23,12 @@ else
     image_name="dbt-${adapter}"
 fi
 
+tag="ghcr.io/popsql/${image_name}:${version}"
+
 docker build \
     --build-arg REQUIREMENTS_FILE="${requirements_file}" \
-    --tag "ghcr.io/popsql/${image_name}:${version}" \
+    --build-arg DBT_VERSION="${version}" \
+    --tag "${tag}" \
     "${BASE_DIR}"
+
+echo "Successfully built image ${tag}"
