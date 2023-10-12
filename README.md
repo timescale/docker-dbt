@@ -23,6 +23,22 @@ docker pull ghcr.io/popsql/dbt-full:${VERSION}
 docker pull ghcr.io/popsql/dbt-${ADAPTER}:${VERSION}
 ```
 
+Each image has both the dbt CLI as well as RPC programs available to use. The image
+sets the following environment variables by default:
+* `DBT_PROFILES_DIR` - where dbt should look for the profiles directory
+* `AWS_SHARED_CREDENTIALS_FILE` - where boto3/AWS libraries will look for the AWS credentials file
+
+The `DBT_PROFILES_DIR` variable can be overwritten when passing the `--profiles-dir` flag for a command.
+
+On image start, the image entrypoint will do the following checks to setup the `/.dbt` directory:
+* If `DBT_PROFILES` is set:
+  * write the contents to `/.dbt/profiles.yml`
+  * If `AWS_CREDENTIALS` is set, write its contents to `/.dbt/aws_credentials`
+  * If `BQ_KEYFILE` is set, write its contents to `/.dbt/bq_keyfile.json`
+* else:
+  * If `~/.dbt/profiles.yml` exists, copy it to `/.dbt/profiles.yml`
+  * If `~/.aws/credentials` exists, copy it to `/.dbt/aws_credentials`
+
 ## Development
 
 The repo is structured such that under the `./requirements` folder, there is a folder
