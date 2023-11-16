@@ -53,6 +53,11 @@ in the lock file).
 As part of our CD process, we then handle generating a per adapter requirements file
 from these two files.
 
+### Requirements
+
+* Python 3.8+
+* [poetry](https://python-poetry.org/)
+
 ### Building Images Locally
 
 Docker images can be built locally via the `./bin/build.sh` script, which takes two
