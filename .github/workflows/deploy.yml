@@ -37,7 +37,7 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
 
       - name: Generate requirements file
-        run: bash ./bin/generate_requirements.sh ${{ matrix.version }} ${{ matrix.adapter }}
+        run: python3 ./bin/generate_requirements.py ${{ matrix.version }} ${{ matrix.adapter }}
 
       # snowflake adapter for dbt < 1.1 does not have prebuilt arm64 wheels, and building it
       # from source is very ardious and time consuming (due to pyarrow), so only build for
